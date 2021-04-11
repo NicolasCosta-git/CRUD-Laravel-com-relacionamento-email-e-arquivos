@@ -20,7 +20,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/pizzeria','PizzeriaController@index')->middleware('auth')->name('pizzeria');
-Route::resource('pizzas', 'PizzasController')->middleware('auth');
-Route::resource('clients', 'ClientsController')->middleware('auth');
-Route::resource('orders', 'OrdersController')->middleware('auth');
+Route::get('/pizzeria', 'PizzeriaController@index')->middleware('auth')->name('pizzeria');
+Route::group(['middleware' => ['role:super_administrador']], function () {
+    Route::resource('clients', 'ClientsController');
+    Route::resource('orders', 'OrdersController');
+    Route::resource('pizzas', 'PizzasController');
+});
+Route::resource('orders', 'OrdersController')->only(['index','show']);
+Route::resource('pizzas', 'PizzasController')->only(['index','show']);

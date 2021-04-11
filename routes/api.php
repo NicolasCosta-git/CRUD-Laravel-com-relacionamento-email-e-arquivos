@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/signin','API\AuthController@signin');
+Route::post('/reset/password', 'API\AuthController@reset');
+Route::apiResource('clients', 'API\APIClientsController')->middleware('auth:api');
+Route::apiResource('orders', 'API\APIOrdersController')->middleware('auth:api');
+Route::apiResource('pizzas', 'API\APIPizzasController')->middleware('auth:api');

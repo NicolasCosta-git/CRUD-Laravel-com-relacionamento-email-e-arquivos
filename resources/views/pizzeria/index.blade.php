@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-3 col-md-4 my-2 my-md-0">
@@ -11,6 +12,7 @@
                     </div>
                 </div>
             </div>
+            @role('super_administrador')
             <div class="col-lg-3 col-md-4 my-2 my-md-0">
                 <div class="card align-items-center">
                     <div class="card-body">
@@ -20,10 +22,11 @@
                     </div>
                 </div>
             </div>
+            @endrole
             <div class="col-lg-3 col-md-4 my-2 my-md-0">
                 <div class="card align-items-center">
                     <div class="card-body ">
-                        <a href="{{route('orders.index')}}" class="btn"> <img src="{{ url('/img/pack-pizza.webp') }}" style="max-width: 200px;" alt="Pedidos">
+                        <a href="{{route('orders.index')}}" class="btn"> <img src="{{ url('/img/pack-pizza.png') }}" style="max-width: 200px;" alt="Pedidos">
                             <h3 class="text-center my-2">Pedidos</h3>
                         </a>
                     </div>
@@ -31,4 +34,5 @@
             </div>
         </div>
     </div>
+
 @endsection

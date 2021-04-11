@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\Clients;
 use App\mail\SendMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Validator;
 use Illuminate\Support\Facades\Mail;
 use PDOException;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\API\BaseController as BaseController;
 
-class ClientsController extends Controller
-{
+class APIClientsController extends BaseController
+{   
     /**
      * Display a listing of the resource.
      *
@@ -20,18 +20,7 @@ class ClientsController extends Controller
      */
     public function index()
     {
-        $clients = Clients::all();
-        return view('pizzeria.clients.index', compact('clients'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('pizzeria.clients.create');
+        return $this->sendResponse(Clients::all());
     }
 
     /**
@@ -59,11 +48,11 @@ class ClientsController extends Controller
             });
         } catch (PDOException $e) {
             if ($e->errorInfo[1] == 1062) {
-                return redirect()->back()->withError('Já existe um cliente com este cpf cadastrado!!');
+                return $this->sendError('Este cpf já está cadastrado');
             }
         }
 
-        return redirect()->route('clients.index');
+        return $this->sendResponse('Cliente cadastrado com sucesso');
     }
 
     /**
@@ -74,20 +63,8 @@ class ClientsController extends Controller
      */
     public function show($id)
     {
-        $client = Clients::findOrFail($id);
-        return view('pizzeria.clients.show', compact('client'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Client  $client
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $client = Clients::findOrFail($id);
-        return view('pizzeria.clients.edit', compact('client'));
+        $client = Clients::find($id);
+        return $this->sendResponse($client);
     }
 
     /**
@@ -104,7 +81,7 @@ class ClientsController extends Controller
                 'name' => 'required',
                 'cpf' => 'required',
             ]);
-            $client = Clients::findOrFail($id);
+            $client = Clients::find($id);
             $inputs = $request->except('photo');
             if ($request->hasFile('photo')) {
                 if ($client->photo != null) {
@@ -116,11 +93,11 @@ class ClientsController extends Controller
             $client->fill($inputs)->save();
         } catch (PDOException $e) {
             if ($e->errorInfo[1] == 1062) {
-                return redirect()->back()->withError('Já existe um cliente com este cpf cadastrado!!');
+                return $this->sendError('Este cpf já está cadastrado');
             }
         }
 
-        return redirect()->route('clients.index');
+        return $this->sendResponse(Clients::find($id),'Dados atualizados com successo');
     }
 
     /**
@@ -131,9 +108,9 @@ class ClientsController extends Controller
      */
     public function destroy($id)
     {
-        $client = Clients::findOrFail($id);
+        $client = Clients::find($id);
         Storage::disk('public')->delete($client->photo);
         Clients::destroy($client->id);
-        return redirect()->route('clients.index');
+        return $this->sendResponse("Cliente deletado com sucesso!");
     }
 }

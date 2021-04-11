@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\Pizzas;
 use Illuminate\Http\Request;
 use PDOException;
-use Validator;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\API\BaseController as BaseController;
 
-class PizzasController extends Controller
-{  
-    
+class APIPizzasController extends BaseController
+{
     /**
      * Display a listing of the resource.
      *
@@ -19,17 +18,7 @@ class PizzasController extends Controller
     public function index()
     {
         $pizzas = Pizzas::orderBy('flavour')->get();
-        return view('pizzeria.pizzas.index', compact('pizzas'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('pizzeria.pizzas.create');
+        return $this->sendResponse($pizzas);
     }
 
     /**
@@ -46,15 +35,15 @@ class PizzasController extends Controller
                 'price' => 'required',
                 'ingredients' => 'required'
             ]);
-            DB::transaction(function() use ($request) {
+            DB::transaction(function () use ($request) {
                 Pizzas::create($request->all());
             });
         } catch (PDOException $e) {
             if ($e->errorInfo[1] == 1062) {
-                return redirect()->back()->withError('Já existe uma pizza com este sabor!!');
+                return $this->sendError("Já existe uma pizza com este sabor!");
             }
         }
-        return redirect()->route('pizzas.index');
+        return $this->sendResponse("Pizza cadastrada com sucesso!");
     }
 
     /**
@@ -65,20 +54,8 @@ class PizzasController extends Controller
      */
     public function show($id)
     {
-        $pizza = Pizzas::findOrFail($id);
-        return view('pizzeria.pizzas.show', compact('pizza'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Pizzas  $pizzas
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $pizza = Pizzas::findOrFail($id);
-        return view('pizzeria.pizzas.edit', compact('pizza'));
+        $pizza = Pizzas::find($id);
+        return $this->sendResponse($pizza);
     }
 
     /**
@@ -96,15 +73,15 @@ class PizzasController extends Controller
                 'price' => 'required',
                 'ingredients' => 'required'
             ]);
-            $pizza = Pizzas::findOrFail($id);
+            $pizza = Pizzas::find($id);
             $pizza->fill($request->all())->save();
         } catch (PDOException $e) {
             if ($e->errorInfo[1] == 1062) {
-                return redirect()->back()->withError('Já existe uma pizza com este sabor!!');
+                return $this->sendError("Já existe uma pizza com este sabor!");
             }
         }
 
-        return redirect()->route('pizzas.index');
+        return $this->sendResponse(Pizzas::find($id), "Pizza alterada com sucesso!");
     }
 
     /**
@@ -115,8 +92,8 @@ class PizzasController extends Controller
      */
     public function destroy($id)
     {
-        $pizzas = Pizzas::findOrFail($id);
+        $pizzas = Pizzas::find($id);
         Pizzas::destroy($pizzas->id);
-        return redirect()->back();
+        return $this->sendResponse("Pizza deletada com sucesso!");
     }
 }
