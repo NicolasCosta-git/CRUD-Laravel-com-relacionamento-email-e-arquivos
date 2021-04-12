@@ -39,7 +39,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="100">Não existem useres cadastrados</td>
+                                    <td colspan="100">Não existem usuários cadastrados</td>
                                 </tr>
                             @endforelse
                         </tbody>
