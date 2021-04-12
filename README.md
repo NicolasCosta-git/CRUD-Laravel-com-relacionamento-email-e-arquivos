@@ -1,7 +1,8 @@
 # Sobre o projeto
-CRUD feito em Laravel 7.29
+Feito em Laravel 7.29
 
 Características:
+* CRUD
 * Envio automático de e-mail;
 * sistema de roles;
 * envio de arquivos;
