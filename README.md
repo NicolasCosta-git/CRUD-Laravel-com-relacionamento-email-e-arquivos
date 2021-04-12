@@ -3,7 +3,7 @@ Feito em Laravel 7.29
 
 Características:
 * CRUD
-* Envio automático de e-mail;
+* Sistema de e-mails;
 * sistema de roles;
 * envio de arquivos;
 * relação entre tabelas;
