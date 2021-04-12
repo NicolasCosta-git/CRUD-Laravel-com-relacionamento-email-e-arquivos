@@ -13,7 +13,7 @@ class BaseController extends Controller
         $response = [
             'status' => $code,
             'success' => true,
-            'message' =>$message,
+            'message' => $message,
             'data' => $results,
         ];
         return response()->json($response)->setStatusCode($code, Status::getStatusMessage($code));
@@ -24,10 +24,10 @@ class BaseController extends Controller
         $response = [
             'status' => $code,
             'success' => false,
-            'message' =>$error,
+            'message' => $error,
         ];
 
-        if(!empty($errorMessage)) {
+        if (!empty($errorMessage)) {
             $response['data'] = $errorMessage;
         }
 

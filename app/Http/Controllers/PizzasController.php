@@ -9,8 +9,8 @@ use Validator;
 use Illuminate\Support\Facades\DB;
 
 class PizzasController extends Controller
-{  
-    
+{
+
     /**
      * Display a listing of the resource.
      *
@@ -46,7 +46,7 @@ class PizzasController extends Controller
                 'price' => 'required',
                 'ingredients' => 'required'
             ]);
-            DB::transaction(function() use ($request) {
+            DB::transaction(function () use ($request) {
                 Pizzas::create($request->all());
             });
         } catch (PDOException $e) {
@@ -117,6 +117,6 @@ class PizzasController extends Controller
     {
         $pizzas = Pizzas::findOrFail($id);
         Pizzas::destroy($pizzas->id);
-        return redirect()->back();
+        return redirect()->route('pizzas.index');
     }
 }

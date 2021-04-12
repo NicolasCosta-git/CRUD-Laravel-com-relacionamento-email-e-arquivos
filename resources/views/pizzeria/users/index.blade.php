@@ -9,9 +9,6 @@
                     <hr>
                 </div>
                 <div class="row d-flex justify-content-center">
-                    <div class="col-md-3 text-center my-4">
-                        <a href="{{ route('clients.create') }}" class="btn btn-lg btn-success">Adicionar clientes</a>
-                    </div>
                     <div class="col-md-3 my-4 text-center col-md-4">
                         <a class="btn btn-lg btn-secondary" href="{{ route('pizzeria') }}">Voltar</a>
                     </div>
@@ -29,22 +26,20 @@
                             </tr>
                         </thead>
                         <tbody align="center">
-                            @forelse ($clients as $client)
+                            @forelse ($users as $user)
                                 <tr>
-                                    <td><img src="{{asset('storage/'.$client->photo)}}" style="max-width: 150px; max-height: 150px;" alt="photo" ></td>
-                                    <td style="vertical-align: middle">{{$client->name}}</td>
-                                    <td style="vertical-align: middle">{{$client->cpf}}</td>
+                                    <td><img src="{{ asset('storage/' . $user->photo) }}"
+                                            style="max-width: 150px; max-height: 150px;" alt="photo"></td>
+                                    <td style="vertical-align: middle">{{ $user->name }}</td>
+                                    <td style="vertical-align: middle">{{ $user->cpf }}</td>
                                     <td style="vertical-align: middle">
-                                    {!! Form::open()->delete()->route('clients.destroy', [$client->id]) !!} 
-                                    <a href="{{route('clients.edit',[$client->id])}}" class="btn btn-md btn-info text-white"> Editar </a>
-                                    <button type="submit" value="" class="btn btn-md btn-danger"> Deletar </button>
-                                    <a href="{{route('clients.show', [$client->id])}}" class="btn btn-md btn-dark text-white"> Ver </a>
-                                    {!! Form::close() !!}
+                                        <a href="{{ route('users.show', [$user->id]) }}" class="btn btn-md btn-dark text-white">
+                                            Ver </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="100">Não existem clientes cadastrados</td>
+                                    <td colspan="100">Não existem useres cadastrados</td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -20,6 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/signin','API\AuthController@signin');
 Route::post('/reset/password', 'API\AuthController@reset');
-Route::apiResource('clients', 'API\APIClientsController')->middleware('auth:api');
+Route::apiResource('users', 'API\APIUsersController')->middleware('auth:api');
 Route::apiResource('orders', 'API\APIOrdersController')->middleware('auth:api');
 Route::apiResource('pizzas', 'API\APIPizzasController')->middleware('auth:api');

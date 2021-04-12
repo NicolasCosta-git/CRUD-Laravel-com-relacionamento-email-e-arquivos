@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Orders;
+use App\mail\SendMail;
 use Illuminate\Http\Request;
-use App\Clients;
 use App\Pizzas;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\API\BaseController as BaseController;
+use Illuminate\Support\Facades\Mail;
 
 class APIOrdersController extends BaseController
 {
@@ -18,7 +19,7 @@ class APIOrdersController extends BaseController
      */
     public function index()
     {
-        $orders = Orders::with('pizzas', 'clients')->orderBy('client_id')->get();
+        $orders = Orders::with('pizzas', 'users')->orderBy('user_id')->get();
         return $this->sendResponse($orders);
     }
 
@@ -31,12 +32,13 @@ class APIOrdersController extends BaseController
     public function store(Request $request)
     {
         $this->validate($request, [
-            'client_id' => 'required',
+            'user_id' => 'required',
             'pizza_id' => 'required'
         ]);
-        DB::transaction(function() use ($request) {
+        DB::transaction(function () use ($request) {
             Orders::create($request->all());
         });
+        Mail::to('teste@teste.com.br')->send(new SendMail('Pedido efetuado com sucesso!'));
         return $this->sendResponse('Pedido cadastrado com sucesso!');
     }
 
@@ -48,12 +50,19 @@ class APIOrdersController extends BaseController
      */
     public function show($id)
     {
-        $order = Orders::select('orders.id', 'clients.name', 'clients.cpf', 'pizzas.flavour', 'pizzas.price')
-        ->join('pizzas', 'pizzas.id', '=', 'orders.pizza_id')
-        ->join('clients', 'clients.id', '=', 'orders.client_id')
-        ->where('orders.id', '=', $id)
-        ->orderBy('clients.name')->get();
-        $order = $order[0]->getAttributes();
+        $check = Orders::find($id);
+        if ($check != null) {
+            $order = Orders::select('orders.id', 'orders.status', 'users.address', 'users.photo', 'users.name', 'users.cpf', 'pizzas.flavour', 'pizzas.price')
+                ->join('pizzas', 'pizzas.id', '=', 'orders.pizza_id')
+                ->join('users', 'users.id', '=', 'orders.user_id')
+                ->where('orders.id', '=', $id)
+                ->orderBy('users.name')
+                ->get();
+            $order = $order[0]->getAttributes();
+        } else {
+            return $this->sendError("id inexistente");
+        }
+
         return $this->sendResponse($order);
     }
 
@@ -67,12 +76,17 @@ class APIOrdersController extends BaseController
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'client_id' => 'required',
+            'user_id' => 'required',
             'pizza_id' => 'required'
         ]);
         $order = Orders::find($id);
-        $order->fill($request->all())->save();
-        return $this->sendResponse(Orders::find($id),"Pedido atualizado com sucesso");
+        if ($order != null) {
+            $order->fill($request->all())->save();
+        } else {
+            return $this->sendError("id inexistente");
+        }
+
+        return $this->sendResponse(Orders::find($id), "Pedido atualizado com sucesso");
     }
 
     /**
@@ -84,7 +98,12 @@ class APIOrdersController extends BaseController
     public function destroy($id)
     {
         $order = Orders::find($id);
-        Orders::destroy($order->id);
+        if ($order != null) {
+            Orders::destroy($order->id);
+        } else {
+            return $this->sendError("id inexistente");
+        }
+
         return $this->sendResponse("Pedido deletado com sucesso!");
     }
 }

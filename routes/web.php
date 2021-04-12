@@ -22,9 +22,13 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/pizzeria', 'PizzeriaController@index')->middleware('auth')->name('pizzeria');
 Route::group(['middleware' => ['role:super_administrador']], function () {
-    Route::resource('clients', 'ClientsController');
+    Route::resource('users', 'UsersController')->only(['index','show']);
     Route::resource('orders', 'OrdersController');
     Route::resource('pizzas', 'PizzasController');
 });
-Route::resource('orders', 'OrdersController')->only(['index','show']);
-Route::resource('pizzas', 'PizzasController')->only(['index','show']);
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::resource('orders', 'OrdersController')->only(['index', 'show', 'create', 'store']);
+    Route::resource('pizzas', 'PizzasController')->only(['index', 'show']);
+    Route::resource('users', 'UsersController')->only(['edit', 'update']);
+});

@@ -27,12 +27,12 @@ class SendMail extends Mailable
      * @return $this
      */
     public function build()
-    {   
+    {
         $name = $this->name;
         return $this->subject('teste')
-        ->view('mail.mail',compact('name'))
-        ->with([
-            'name' => $this->name
-        ]);
+            ->view('mail.mail', compact('name'))
+            ->with([
+                'name' => $this->name
+            ]);
     }
 }

@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Orders;
 use Illuminate\Http\Request;
-use App\Clients;
 use App\Pizzas;
+use App\User;
 use Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\mail\SendMail;
 
 class OrdersController extends Controller
 {
@@ -18,7 +20,12 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        $orders = Orders::with('pizzas', 'clients')->orderBy('client_id')->get();
+        if (auth()->user()->id == 1) {
+            $orders = Orders::with('pizzas', 'users')->orderBy('user_id')->get();
+        } else {
+            $orders = Orders::with('pizzas', 'users')->where('user_id', auth()->user()->id)->orderBy('user_id')->get();
+        }
+
         return view('pizzeria.orders.index', compact('orders'));
     }
 
@@ -29,9 +36,8 @@ class OrdersController extends Controller
      */
     public function create()
     {
-        $clients = Clients::orderBy('name')->get();
         $pizzas = Pizzas::orderBy('flavour')->get();
-        return view('pizzeria.orders.create', compact('clients', 'pizzas'));
+        return view('pizzeria.orders.create', compact('pizzas'));
     }
 
     /**
@@ -43,12 +49,14 @@ class OrdersController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'client_id' => 'required',
             'pizza_id' => 'required'
         ]);
-        DB::transaction(function() use ($request) {
+        $request['user_id'] = auth()->user()->id;
+        $request['status'] = 'Em andamento';
+        DB::transaction(function () use ($request) {
             Orders::create($request->all());
         });
+        Mail::to('teste@teste.com.br')->send(new SendMail('Pedido cadastrado com sucesso!'));
         return redirect()->route('orders.index');
     }
 
@@ -60,7 +68,12 @@ class OrdersController extends Controller
      */
     public function show($id)
     {
-        $order = Orders::select('orders.id', 'clients.name', 'clients.cpf', 'pizzas.flavour', 'pizzas.price')->join('pizzas', 'pizzas.id', '=', 'orders.pizza_id')->join('clients', 'clients.id', '=', 'orders.client_id')->where('orders.id', '=', $id)->orderBy('clients.name')->get();
+        $order = Orders::select('orders.id', 'orders.status', 'users.address', 'users.photo', 'users.name', 'users.cpf', 'pizzas.flavour', 'pizzas.price')
+            ->join('pizzas', 'pizzas.id', '=', 'orders.pizza_id')
+            ->join('users', 'users.id', '=', 'orders.user_id')
+            ->where('orders.id', '=', $id)
+            ->orderBy('users.name')
+            ->get();
         $order = $order[0]->getAttributes();
         return view('pizzeria.orders.show', compact('order'));
     }
@@ -73,10 +86,9 @@ class OrdersController extends Controller
      */
     public function edit($id)
     {
-        $clients = Clients::orderBy('name')->get();
         $pizzas = Pizzas::orderBy('flavour')->get();
-        $order = Orders::findOrFail($id);
-        return view('pizzeria.orders.edit', compact('clients', 'pizzas', 'order'));
+        $order = Orders::find($id);
+        return view('pizzeria.orders.edit', compact('pizzas', 'order'));
     }
 
     /**
@@ -88,11 +100,12 @@ class OrdersController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $order = Orders::find($id);
+        $request['user_id'] = $order->user_id;
         $this->validate($request, [
-            'client_id' => 'required',
+            'user_id' => 'required',
             'pizza_id' => 'required'
         ]);
-        $order = Orders::findOrFail($id);
         $order->fill($request->all())->save();
         return redirect()->route('orders.index');
     }

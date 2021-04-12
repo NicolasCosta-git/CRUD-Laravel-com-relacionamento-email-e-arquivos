@@ -18,6 +18,9 @@ class AdminSeeder extends Seeder
             'name' => 'admin',
             'email' => 'pizzeria@admin.com',
             'password' => bcrypt('pizzeria'),
+            'address' => 'pizzeria',
+            'cpf'=>0000000000,
+            'photo' => null
         ]);
         $user->assignRole('super_administrador');
     }

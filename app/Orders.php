@@ -8,14 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Orders extends Model
 {
     protected $fillable = [
-        'client_id',
+        'user_id',
         'pizza_id',
     ];
 
-    public function pizzas(){
-        return $this->belongsTo(Pizzas::class,'pizza_id');
+    public function pizzas()
+    {
+        return $this->belongsTo(Pizzas::class, 'pizza_id');
     }
-    public function clients(){
-        return $this->belongsTo(Clients::class,'client_id');
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

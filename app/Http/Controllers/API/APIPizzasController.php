@@ -55,7 +55,11 @@ class APIPizzasController extends BaseController
     public function show($id)
     {
         $pizza = Pizzas::find($id);
-        return $this->sendResponse($pizza);
+        if ($pizza != null) {
+            return $this->sendResponse($pizza);
+        } else {
+            return $this->sendError("id inexistente");
+        }
     }
 
     /**
@@ -74,7 +78,11 @@ class APIPizzasController extends BaseController
                 'ingredients' => 'required'
             ]);
             $pizza = Pizzas::find($id);
-            $pizza->fill($request->all())->save();
+            if ($pizza != null) {
+                $pizza->fill($request->all())->save();
+            } else {
+                return $this->sendError("id inexistente");
+            }
         } catch (PDOException $e) {
             if ($e->errorInfo[1] == 1062) {
                 return $this->sendError("Já existe uma pizza com este sabor!");
@@ -92,8 +100,13 @@ class APIPizzasController extends BaseController
      */
     public function destroy($id)
     {
-        $pizzas = Pizzas::find($id);
-        Pizzas::destroy($pizzas->id);
+        $pizza = Pizzas::find($id);
+        if ($pizza != null) {
+            Pizzas::destroy($pizza->id);
+        } else {
+            return $this->sendError("id inexistente");
+        }
+
         return $this->sendResponse("Pizza deletada com sucesso!");
     }
 }

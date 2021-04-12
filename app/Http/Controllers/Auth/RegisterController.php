@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Expr\Cast\Array_;
 
 class RegisterController extends Controller
 {
@@ -53,6 +56,9 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'photo' => ['required'],
+            'address' => ['required', 'string'],
+            'cpf' => ['required', 'integer', 'unique:users']
         ]);
     }
 
@@ -64,10 +70,16 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $upload = $data['photo']->store('clients', 'public');
+        $data['photo'] = $upload;
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'photo' => $data['photo'],
+            'address' => $data['address'],
+            'cpf' => $data['cpf']
         ]);
     }
 }

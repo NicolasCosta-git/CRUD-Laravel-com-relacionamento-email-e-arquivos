@@ -9,8 +9,8 @@
             </div>
             <div class="row d-flex justify-content-center">
                 @role('super_administrador')
-                <div class="col-md-3 text-center my-4">                
-                    <a href="{{ route('pizzas.create') }}" class="btn btn-lg btn-success">Adicionar pizzas</a>                    
+                <div class="col-md-3 text-center my-4">
+                    <a href="{{ route('pizzas.create') }}" class="btn btn-lg btn-success">Adicionar pizzas</a>
                 </div>
                 @endrole
                 <div class="col-md-3 my-4 text-center col-md-4">
@@ -58,5 +58,5 @@
             </div>
         </div>
     </div>
-    
+
 @endsection
