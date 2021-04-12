@@ -20,6 +20,6 @@ Os pedidos são únicos para cada usuário, apenas ele e a conta administradora 
 Após baixar o arquivo, renomear o .env.example para .env, configurar os campos de database e email. 
 Após isso, abra o local da pasta no terminal e rode `composer install` para instalar as dependências, depois, rode `php artisan key:generate`, `php artisan migrate --seed`, `php artisan passport:install`, `php artisan passport:client --personal` e por fim `php artisan serve` para iniciar o servidor.
 
-A conta admin tem as seguintes credenciais:
+A conta admin tem as seguintes credenciais ->
 Email: `pizzeria@admin.com`
 Senha: `pizzeria`
