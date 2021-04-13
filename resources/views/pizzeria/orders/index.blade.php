@@ -27,7 +27,9 @@
                                 <th>Pizza</th>
                                 <th>Preço</th>
                                 <th></th>
+                                @role('super_administrador')
                                 <th></th>
+                                @endrole
                             </tr>
                         </thead>
                         <tbody align="center">
