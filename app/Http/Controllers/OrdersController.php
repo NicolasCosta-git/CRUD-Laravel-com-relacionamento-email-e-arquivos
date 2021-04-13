@@ -68,7 +68,7 @@ class OrdersController extends Controller
      */
     public function show($id)
     {
-        $order = Orders::select('orders.id', 'orders.status', 'users.address', 'users.photo', 'users.name', 'users.cpf', 'pizzas.flavour', 'pizzas.price')
+        $order = Orders::select('orders.id', 'users.address', 'users.photo', 'users.name', 'users.cpf', 'pizzas.flavour', 'pizzas.price')
             ->join('pizzas', 'pizzas.id', '=', 'orders.pizza_id')
             ->join('users', 'users.id', '=', 'orders.user_id')
             ->where('orders.id', '=', $id)
