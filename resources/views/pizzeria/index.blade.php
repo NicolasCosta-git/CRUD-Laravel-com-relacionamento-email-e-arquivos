@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('content')
-    {{ auth()->user()->id }}
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-3 col-md-4 my-2 my-md-0">
