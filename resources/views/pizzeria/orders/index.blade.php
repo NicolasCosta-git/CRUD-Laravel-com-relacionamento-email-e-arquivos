@@ -27,12 +27,13 @@
                                 <th>Pizza</th>
                                 <th>Preço</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody align="center">
                             @forelse ($orders as $order)
                                 <tr>
-                                    @role('super_admin')
+                                    @role('super_administrador')
                                     <td style="vertical-align: middle">{{ $order->users->name }}</td>
                                     @endrole
                                     <td style="vertical-align: middle">{{ $order->pizzas->flavour }}</td>
